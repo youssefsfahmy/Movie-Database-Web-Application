@@ -69,7 +69,12 @@ app.get('/searchresults', function(req, res) {
 });
 
 app.get('/watchlist', function(req, res) {
-  res.render('watchlist',{userwatchlist: loadwatchlist(req.session.names)});
+  var a=loadwatchlist(req.session.names);
+ var results=[]
+  for(var i=0;i<a.length;i++){
+    results.push("<br>"+`<a href=${"/"+a[i]}>${a[i]}</a>`);
+  }
+  res.render('watchlist',{userwatchlist: results});
 });
 
 
@@ -171,21 +176,22 @@ var movies = ['Godfather', 'Godfather2', 'conjuring', 'fightclub', 'scream','dar
 app.post('/search', function(req,res){
   var s = req.body.Search;
 
-  var results="";
+  var results=[];
 
   for(var i =0;i<movies.length;i++){
 
     if((movies[i].toLowerCase()).includes(s)){
      
 
-      results=results+"<br>"+`<a href=${"/"+movies[i]}>${movies[i]}</a>`
+     results.push("<br>"+`<a href=${"/"+movies[i]}>${movies[i]}</a>`)
     }
   }
-  if (results ==""){
-    res.send('Movie not found');
+  if (results.length==0){
+    results.push('Movie not found')
+  res.render("searchresults",{res:results });
   }
   else{
- res.send(results);
+    res.render("searchresults",{res: results });
   }
 });
 
@@ -276,7 +282,7 @@ for(var i=0;i<arrayOfObjects.length;i++){
   }
 }
 if(flag==true){
-  //res.send("suck");
+  
   res.render('registrationsucc');
   arrayOfObjects.push(obj);
 }
